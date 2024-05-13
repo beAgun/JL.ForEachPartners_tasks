@@ -24,38 +24,38 @@ class GetScoreTestCase(TestCase):
     def test_existing_offset(self):
         for i in range(self.n_iter):
             offset = random.choice(self.offset_lst)
-            print(offset)
+            # print(offset)
             home, away = get_score(self.game_stamps, offset)
             self.assertEqual(home, offset / self.offset_step)
             self.assertEqual(away, offset / self.offset_step)
 
     def test_min_offset(self):
         offset = 0
-        print(f'offset: {offset}, min_offset: 0')
+        # print(f'offset: {offset}, min_offset: 0')
         home, away = get_score(self.game_stamps, offset)
         self.assertEqual(home, 0)
         self.assertEqual(away, 0)
-        print(f'home: {home}, away: {away}')
+        # print(f'home: {home}, away: {away}')
 
     def test_greater_than_max_offset(self):
         for i in range(self.n_iter):
             offset = random.randint(self.max_offset, self.max_offset + 100)
-            print(f'offset: {offset}, max_offset: {self.max_offset}')
+            # print(f'offset: {offset}, max_offset: {self.max_offset}')
             home, away = get_score(self.game_stamps, offset)
             self.assertEqual(home, self.max_offset / self.offset_step)
             self.assertEqual(away, self.max_offset / self.offset_step)
-            print(f'home: {home}, away: {away}')
+            # print(f'home: {home}, away: {away}')
 
     def test_not_existing_offset(self):
         for i in range(self.n_iter):
             step = random.randint(1, self.offset_step - 1)
             offset = random.choice(self.offset_lst) + step
-            print(f'offset: {offset}, max_offset: {self.max_offset}')
+            # print(f'offset: {offset}, max_offset: {self.max_offset}')
             home, away = get_score(self.game_stamps, offset)
             self.assertEqual(home, (offset - step) / self.offset_step)
             self.assertEqual(away, (offset - step) / self.offset_step)
-            print(f'home: {home}, away: {away}')
-        pprint(self.game_stamps)
+            # print(f'home: {home}, away: {away}')
+        # pprint(self.game_stamps)
 
     def tearDown(self) -> None:
         ...
