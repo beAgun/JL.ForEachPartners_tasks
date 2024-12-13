@@ -1,8 +1,13 @@
+import datetime
+
+from PyJWT import
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, Group, Permission, UserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from api import settings
 
 
 class MyUserManager(UserManager):
@@ -63,6 +68,41 @@ class User(AbstractUser):
     # USERNAME_FIELD = 'username'
 
     objects = MyUserManager()
+
+    @property
+    def token(self):
+        """
+        Позволяет получить токен пользователя путем вызова user.token, вместо
+        user._generate_jwt_token(). Декоратор @property выше делает это
+        возможным. token называется "динамическим свойством".
+        """
+        return self._generate_jwt_token()
+
+    def get_full_name(self):
+        """
+        Этот метод требуется Django для таких вещей, как обработка электронной
+        почты. Обычно это имя фамилия пользователя, но поскольку мы не
+        используем их, будем возвращать username.
+        """
+        return self.username
+
+    def get_short_name(self):
+        """ Аналогично методу get_full_name(). """
+        return self.username
+
+    def _generate_jwt_token(self):
+        """
+        Генерирует веб-токен JSON, в котором хранится идентификатор этого
+        пользователя, срок действия токена составляет 1 день от создания
+        """
+        dt = datetime.now() + datetime.timedelta(days=1)
+
+        token = jwt.encode({
+            'id': self.pk,
+            'exp': int(dt.strftime('%s'))
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token.decode('utf-8')
 
     def __str__(self):
         return f'{self.username}'
